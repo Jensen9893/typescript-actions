@@ -1,0 +1,14 @@
+name: 'Greet User Action'
+description: 'Greets a user with a custom message'
+author: 'Your Name'
+inputs:
+  name:
+    description: 'Name of the user to greet'
+    required: true
+    default: 'Guest'
+outputs:
+  greeting:
+    description: 'The generated greeting message'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
