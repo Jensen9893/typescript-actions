@@ -1,6 +1,6 @@
 name: 'Greet User Action'
 description: 'Greets a user with a custom message'
-author: 'Your Name'
+author: 'Dat Nguyen'
 inputs:
   name:
     description: 'Name of the user to greet'
