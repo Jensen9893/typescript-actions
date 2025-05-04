@@ -1,36 +1,21 @@
-import { defineConfig } from "eslint/config";
-import typescriptEslint from "@typescript-eslint/eslint-plugin";
-import globals from "globals";
-import tsParser from "@typescript-eslint/parser";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
+import js from '@eslint/js';
+import typescriptEslint from '@typescript-eslint/eslint-plugin';
+import tsParser from '@typescript-eslint/parser';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
-});
-
-export default defineConfig([{
-    extends: compat.extends("plugin:@typescript-eslint/recommended"),
-
-    plugins: {
-        "@typescript-eslint": typescriptEslint,
-    },
-
+export default [
+  {
+    files: ['src/**/*.ts', 'scripts/**/*.ts'],
     languageOptions: {
-        globals: {
-            ...globals.node,
-        },
-
-        parser: tsParser,
+      parser: tsParser,
+      sourceType: 'module',
     },
-
+    plugins: {
+      '@typescript-eslint': typescriptEslint,
+    },
     rules: {
-        "no-console": "warn",
+      ...js.configs.recommended.rules,
+      ...typescriptEslint.configs.recommended.rules,
+      'no-console': 'warn',
     },
-}]);
+  },
+];
