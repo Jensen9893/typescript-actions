@@ -23,6 +23,7 @@ jobs:
 
   validate-file:
     runs-on: ubuntu-latest
+    needs: greet  # Ensure this job runs after the greet job
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -34,9 +35,10 @@ jobs:
         uses: ./validate-action/
         with:
           file-path: 'README.md'
-          
+
   build-docker:
     runs-on: ubuntu-latest
+    needs: greet  # Ensure this job runs after the greet job
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
