@@ -1,0 +1,12 @@
+name: 'Validate File Action'
+description: 'Checks if a file exists'
+inputs:
+  file-path:
+    description: 'Path to the file'
+    required: true
+outputs:
+  exists:
+    description: 'Whether the file exists'
+runs:
+  using: 'node16'
+  main: '../dist/src/validate-file.js'

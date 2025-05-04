@@ -6,6 +6,10 @@ inputs:
     description: 'Name of the user to greet'
     required: true
     default: 'Guest'
+  prefix:
+    description: 'Prefix for the greeting message'
+    required: false
+    default: 'Hello'
 outputs:
   greeting:
     description: 'The generated greeting message'

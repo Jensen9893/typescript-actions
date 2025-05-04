@@ -13,8 +13,13 @@ jobs:
       - uses: ./
         with:
           name: 'Alice'
+          prefix: 'Hi'
         id: greet  # Assign ID to access outputs
       - name: Process Greeting
         run: node scripts/process-greeting.js
         env:
           GREETING: ${{ steps.greet.outputs.greeting }}
+      - name: Validate File
+        uses: ./validate-action/
+        with:
+          file-path: 'README.md'

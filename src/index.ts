@@ -3,7 +3,8 @@ import * as core from '@actions/core';
 async function run() {
   try {
     const name = core.getInput('name', { required: true });
-    const greeting = `Hello, ${name}! Welcome to GitHub Actions!`;
+    const prefix = core.getInput('prefix')
+    const greeting = ` ${prefix}, ${name}! Welcome to GitHub Actions!`;
     core.info(greeting);
     core.setOutput('greeting', greeting);
   } catch (error: unknown) {

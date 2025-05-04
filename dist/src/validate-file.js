@@ -43,17 +43,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(require("@actions/core"));
+const fs = __importStar(require("fs"));
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const name = core.getInput('name', { required: true });
-            const prefix = core.getInput('prefix');
-            const greeting = ` ${prefix}, ${name}! Welcome to GitHub Actions!`;
-            core.info(greeting);
-            core.setOutput('greeting', greeting);
+            const filePath = core.getInput('file-path', { required: true });
+            if (fs.existsSync(filePath)) {
+                core.info(`File ${filePath} exists!`);
+                core.setOutput('exists', 'true');
+            }
+            else {
+                core.setFailed(`File ${filePath} does not exist.`);
+            }
         }
         catch (error) {
-            // Type guard to ensure error is an Error object
             const message = error instanceof Error ? error.message : String(error);
             core.setFailed(`Action failed: ${message}`);
         }
