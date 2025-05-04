@@ -8,5 +8,5 @@ outputs:
   exists:
     description: 'Whether the file exists'
 runs:
-  using: 'node16'
+  using: 'node22'
   main: '../dist/src/validate-file.js'

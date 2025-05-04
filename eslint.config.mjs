@@ -8,6 +8,12 @@ export default [
     languageOptions: {
       parser: tsParser,
       sourceType: 'module',
+      globals: {
+        Buffer: 'readonly',
+        process: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly'
+      }
     },
     plugins: {
       '@typescript-eslint': typescriptEslint,
@@ -16,6 +22,7 @@ export default [
       ...js.configs.recommended.rules,
       ...typescriptEslint.configs.recommended.rules,
       'no-console': 'warn',
+      'constructor-super': 'off',
     },
   },
 ];

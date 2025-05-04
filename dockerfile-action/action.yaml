@@ -1,0 +1,26 @@
+name: 'Build Docker Image'
+description: 'Builds and optionally pushes a Docker image'
+inputs:
+  image-name:
+    description: 'Name of the Docker image (e.g., my-app)'
+    required: true
+  tag:
+    description: 'Tag for the Docker image (e.g., latest)'
+    required: true
+    default: 'latest'
+  push:
+    description: 'Push image to registry (true/false)'
+    required: false
+    default: 'false'
+  registry:
+    description: 'Registry URL (e.g., docker.io)'
+    required: false
+  username:
+    description: 'Registry username'
+    required: false
+  password:
+    description: 'Registry password'
+    required: false
+runs:
+  using: 'node22'
+  main: 'dist/docker-build/index.js'

@@ -20,7 +20,33 @@ jobs:
         run: node scripts/process-greeting.js
         env:
           GREETING: ${{ steps.greet.outputs.greeting }}
+
+  validate-file:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '22.15.0'
+      - run: npm install
+      - run: npm run build
       - name: Validate File
         uses: ./validate-action/
         with:
           file-path: 'README.md'
+          
+  build-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - run: npm install
+      - run: npm run build
+      - name: Build Docker Image
+        uses: ./
+        with:
+          image-name: 'my-greeting-app'
+          tag: 'latest'
+          push: 'false'  # Set to 'true' for pushing
