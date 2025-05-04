@@ -13,3 +13,8 @@ jobs:
       - uses: ./
         with:
           name: 'Alice'
+        id: greet  # Assign ID to access outputs
+      - name: Process Greeting
+        run: node scripts/process-greeting.js
+        env:
+          GREETING: ${{ steps.greet.outputs.greeting }}
