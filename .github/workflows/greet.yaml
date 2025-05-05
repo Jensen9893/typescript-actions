@@ -54,7 +54,7 @@ jobs:
       - run: npm install
       - run: npm run build
       - name: Build Docker Image
-        uses: ./
+        uses: ./dockerfile-action/
         with:
           image-name: 'my-greeting-app'
           tag: 'latest'
