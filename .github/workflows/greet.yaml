@@ -1,5 +1,12 @@
 name: Greet User
-on: [push]
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - test
+      - dev
 jobs:
   greet:
     runs-on: ubuntu-latest
@@ -13,7 +20,7 @@ jobs:
       - run: npm run build
       - uses: ./
         with:
-          name: 'Alice'
+          name: 'Dat'
           prefix: 'Hi'
         id: greet  # Assign ID to access outputs
       - name: Process Greeting
