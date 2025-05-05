@@ -3,9 +3,9 @@ on:
   push:
     branches:
       - main
-      - test
   pull_request:
     branches:
+      - test
       - dev
     types: [closed]
 jobs:
@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
       - uses: actions/setup-node@v3
         with:
           node-version: '22.15.0'
@@ -35,6 +37,8 @@ jobs:
     needs: greet
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
       - uses: actions/setup-node@v3
         with:
           node-version: '22.15.0'
@@ -50,6 +54,8 @@ jobs:
     needs: greet  # Ensure this job runs after the greet job
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
       - uses: actions/setup-node@v3
         with:
           node-version: '20'
