@@ -61,3 +61,11 @@ jobs:
           image-name: 'my-greeting-app'
           tag: 'latest'
           push: 'false'  # Set to 'true' for pushing
+
+  return-greeting:
+    runs-on: ubuntu-latest
+    needs: [validate-file, build-docker]  # Ensure this job runs after the greet job
+    steps:
+      - uses: actions/checkout@v3
+      - name: Return Greeting
+        run: echo "Pipeline run successfully!"
