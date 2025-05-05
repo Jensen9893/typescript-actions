@@ -20,7 +20,7 @@ jobs:
       - run: npm run build
       - uses: ./
         with:
-          name: 'Dat'
+          name: 'Dat Nguyen'
           prefix: 'Hi'
         id: greet  # Assign ID to access outputs
       - name: Process Greeting
