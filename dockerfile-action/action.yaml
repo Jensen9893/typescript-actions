@@ -22,5 +22,5 @@ inputs:
     description: 'Registry password'
     required: false
 runs:
-  using: 'node22'
-  main: 'dist/docker-build/index.js'
+  using: 'node20'
+  main: '../dist/src/docker-build.js'
