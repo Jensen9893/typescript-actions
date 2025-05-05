@@ -31,7 +31,7 @@ jobs:
 
   validate-file:
     runs-on: ubuntu-latest
-    needs: greet  # Ensure this job runs after the greet job
+    needs: greet
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -55,7 +55,7 @@ jobs:
       - run: npm install
       - run: npm run build
       - name: Build Docker Image
-        uses: ./dockerfile-action/
+        uses: ./
         with:
           image-name: 'my-greeting-app'
           tag: 'latest'
