@@ -7,7 +7,7 @@ jobs:
 
   validate:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.base.ref == 'main' || github.event.action == 'closed'
+    if: github.event.pull_request.base.ref == 'main' && github.event.action != 'closed' || (github.event.action == 'closed' && github.event.pull_request.merged == true && contains(fromJSON('["main", "dev", "test"]'), github.event.pull_request.base.ref))
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -20,7 +20,7 @@ jobs:
   
   greet:
     runs-on: ubuntu-latest
-    if: github.event.action == 'closed' && contains(fromJSON('["main", "dev", "test"]'), github.event.pull_request.base.ref)
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true && contains(fromJSON('["main", "dev", "test"]'), github.event.pull_request.base.ref)
     needs: validate
     steps:
       - uses: actions/checkout@v3
@@ -41,7 +41,7 @@ jobs:
 
   build-docker:
     runs-on: ubuntu-latest
-    if: github.event.action == 'closed' && contains(fromJSON('["main", "dev", "test"]'), github.event.pull_request.base.ref)
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true && contains(fromJSON('["main", "dev", "test"]'), github.event.pull_request.base.ref)
     # This job will only run if the pull request is closed and the base branch is one of the specified branches
     needs: validate  # Ensure this job runs after the greet job
     steps:
@@ -62,7 +62,7 @@ jobs:
 
   deploy-demo:
     runs-on: ubuntu-latest
-    if: github.event.action == 'closed' && contains(fromJSON('["main", "dev", "test"]'), github.event.pull_request.base.ref)
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true && contains(fromJSON('["main", "dev", "test"]'), github.event.pull_request.base.ref)
     needs: [greet, build-docker]
     steps:
       - name: Simulate Docker Image Deployment
@@ -75,7 +75,7 @@ jobs:
 
   return-greeting:
     runs-on: ubuntu-latest
-    if: github.event.action == 'closed' && contains(fromJSON('["main", "dev", "test"]'), github.event.pull_request.base.ref)
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true && contains(fromJSON('["main", "dev", "test"]'), github.event.pull_request.base.ref)
     needs: [deploy-demo]  # Ensure this job runs after the greet job
     steps:
       - uses: actions/checkout@v3
