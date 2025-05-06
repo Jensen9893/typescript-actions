@@ -62,9 +62,21 @@ jobs:
           tag: 'latest'
           push: 'false'  # Set to 'true' for pushing
 
+  deploy-demo:
+    runs-on: ubuntu-latest
+    needs: [greet, build-docker]
+    steps:
+      - name: Simulate Docker Image Deployment
+        run: |
+          echo "Starting deployment of my-greeting-app:latest..."
+          echo "Connecting to fictional Kubernetes cluster..."
+          echo "Deploying my-greeting-app:latest to namespace 'demo'..."
+          echo "Verifying deployment status..."
+          echo "Deployment successful! my-greeting-app:latest is now running."
+
   return-greeting:
     runs-on: ubuntu-latest
-    needs: [build-docker, greet]  # Ensure this job runs after the greet job
+    needs: [deploy-demo]  # Ensure this job runs after the greet job
     steps:
       - uses: actions/checkout@v3
       - name: Return Greeting
