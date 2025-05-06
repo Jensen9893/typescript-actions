@@ -1,57 +1,49 @@
 name: Greet User
 on: 
-  push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - test
-      - dev
-    types: [closed]
+    branches: ['**']
+    types: [opened,closed]
 jobs:
-  greet:
+
+  validate:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.base.ref == 'main' || github.event.action == 'closed'
     steps:
       - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.base.ref }}
       - uses: actions/setup-node@v3
         with:
-          node-version: '22.15.0'
-      - run: whoami
+          node-version: '20'
       - run: npm install
-      - run: npm run lint
+      - name: Validate App
+        uses: ./validate-action/
+        id: validate
+  
+  greet:
+    runs-on: ubuntu-latest
+    if: github.event.action == 'closed' && contains(fromJSON('["main", "dev", "test"]'), github.event.pull_request.base.ref)
+    needs: validate
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - run: npm install
       - run: npm run build
       - uses: ./
+
         with:
-          name: 'Dat Nguyen'
-          prefix: 'Hi'
-        id: greet  # Assign ID to access outputs
+          name: 'Alice'
+        id: greet
       - name: Process Greeting
-        run: node scripts/process-greeting.js
+        run: node dist/scripts/process-greeting.js
         env:
           GREETING: ${{ steps.greet.outputs.greeting }}
 
-  validate-file:
-    runs-on: ubuntu-latest
-    needs: greet
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.base.ref }}
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '22.15.0'
-      - run: npm install
-      - run: npm run build
-      - name: Validate File
-        uses: ./validate-action/
-        with:
-          file-path: 'README.md'
-
   build-docker:
     runs-on: ubuntu-latest
-    needs: greet  # Ensure this job runs after the greet job
+    if: github.event.action == 'closed' && contains(fromJSON('["main", "dev", "test"]'), github.event.pull_request.base.ref)
+    # This job will only run if the pull request is closed and the base branch is one of the specified branches
+    needs: validate  # Ensure this job runs after the greet job
     steps:
       - uses: actions/checkout@v3
         with:
@@ -67,3 +59,25 @@ jobs:
           image-name: 'my-greeting-app'
           tag: 'latest'
           push: 'false'  # Set to 'true' for pushing
+
+  deploy-demo:
+    runs-on: ubuntu-latest
+    if: github.event.action == 'closed' && contains(fromJSON('["main", "dev", "test"]'), github.event.pull_request.base.ref)
+    needs: [greet, build-docker]
+    steps:
+      - name: Simulate Docker Image Deployment
+        run: |
+          echo "Starting deployment of my-greeting-app:latest..."
+          echo "Connecting to fictional Kubernetes cluster..."
+          echo "Deploying my-greeting-app:latest to namespace 'demo'..."
+          echo "Verifying deployment status..."
+          echo "Deployment successful! my-greeting-app:latest is now running."
+
+  return-greeting:
+    runs-on: ubuntu-latest
+    if: github.event.action == 'closed' && contains(fromJSON('["main", "dev", "test"]'), github.event.pull_request.base.ref)
+    needs: [deploy-demo]  # Ensure this job runs after the greet job
+    steps:
+      - uses: actions/checkout@v3
+      - name: Return Greeting
+        run: echo "Pipeline run successfully!"

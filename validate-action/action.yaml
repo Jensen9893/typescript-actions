@@ -1,12 +1,20 @@
-name: 'Validate File Action'
-description: 'Checks if a file exists'
-inputs:
-  file-path:
-    description: 'Path to the file'
-    required: true
+# name: 'Validate File Action'
+# description: 'Checks if a file exists'
+# inputs:
+#   file-path:
+#     description: 'Path to the file'
+#     required: true
+# outputs:
+#   exists:
+#     description: 'Whether the file exists'
+# runs:
+#   using: 'node16'
+#   main: '../dist/src/validate-file.js'
+name: 'Validate App Action'
+description: 'Runs linting and tests for the application'
 outputs:
-  exists:
-    description: 'Whether the file exists'
+  validated:
+    description: 'Whether validation passed'
 runs:
-  using: 'node16'
-  main: '../dist/src/validate-file.js'
+  using: 'node20'
+  main: '../dist/src/validate-app.js'

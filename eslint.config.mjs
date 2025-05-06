@@ -4,7 +4,7 @@ import tsParser from '@typescript-eslint/parser';
 
 export default [
   {
-    files: ['src/**/*.ts', 'scripts/**/*.ts'],
+    files: ['src/**/*.ts', 'scripts/**/*.ts','app/**/*.ts'],
     languageOptions: {
       parser: tsParser,
       sourceType: 'module',
@@ -12,7 +12,10 @@ export default [
         Buffer: 'readonly',
         process: 'readonly',
         __dirname: 'readonly',
-        __filename: 'readonly'
+        __filename: 'readonly',
+        describe: 'readonly',
+        test: 'readonly',
+        expect: 'readonly'
       }
     },
     plugins: {
