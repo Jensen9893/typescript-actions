@@ -15,6 +15,7 @@ export default [
         __filename: 'readonly',
         describe: 'readonly',
         test: 'readonly',
+        console: 'readonly',
         expect: 'readonly'
       }
     },
@@ -24,7 +25,8 @@ export default [
     rules: {
       ...js.configs.recommended.rules,
       ...typescriptEslint.configs.recommended.rules,
-      'no-console': 'warn',
+      'no-console': 'off',
+      "no-undef" : 'error',
       'constructor-super': 'off',
     },
   },
