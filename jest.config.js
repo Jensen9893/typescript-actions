@@ -11,4 +11,5 @@ module.exports = {
   testMatch: ['**/?(*.)+(spec|test).ts'],
   moduleFileExtensions: ['ts', 'js'],
   coverageDirectory: 'coverage',
+  roots: ['<rootDir>/app'],
 }
