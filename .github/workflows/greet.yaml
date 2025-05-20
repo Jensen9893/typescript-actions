@@ -1,44 +1,23 @@
 name: Greet User
-on: [push]
+on: 
+  pull_request:
+    branches: ['**']
+    types: [opened,closed]
 jobs:
-  greet:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '22.15.0'
-      - run: npm install
-      - run: npm run lint
-      - run: npm run build
-      - uses: ./
-        with:
-          name: 'Alice'
-          prefix: 'Hi'
-        id: greet  # Assign ID to access outputs
-      - name: Process Greeting
-        run: node scripts/process-greeting.js
-        env:
-          GREETING: ${{ steps.greet.outputs.greeting }}
+  catching:
+    - name: Cache npm dependencies
+      uses: actions/cache@v3
+      with:
+      path: ~/.npm
+      key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+      restore-keys: |
+        ${{ runner.os }}-node-
+    - name: Install dependencies
+      run: npm ci
 
-  validate-file:
+  validate:
     runs-on: ubuntu-latest
-    needs: greet  # Ensure this job runs after the greet job
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '22.15.0'
-      - run: npm install
-      - run: npm run build
-      - name: Validate File
-        uses: ./validate-action/
-        with:
-          file-path: 'README.md'
-
-  build-docker:
-    runs-on: ubuntu-latest
-    needs: greet  # Ensure this job runs after the greet job
+    if: github.event.pull_request.base.ref == 'main' && github.event.action != 'closed' || (github.event.action == 'closed' && github.event.pull_request.merged == true && contains(fromJSON('["main", "dev", "test"]'), github.event.pull_request.base.ref))
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -46,9 +25,73 @@ jobs:
           node-version: '20'
       - run: npm install
       - run: npm run build
+      - name: Validate App
+        uses: ./validate-action/
+        id: validate
+  
+  greet:
+    runs-on: ubuntu-latest
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true && contains(fromJSON('["main", "dev", "test"]'), github.event.pull_request.base.ref)
+    needs: validate
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - run: npm install
+      - run: npm run lint
+      - run: npm run test
+      - run: npm run build
+      - name: Verify Build Output
+        run: ls -R dist/
+      - uses: ./
+        with:
+          name: 'Dat Nguyen'
+        id: greet
+      - name: Process Greeting
+        run: node dist/scripts/process-greeting.js
+        env:
+          GREETING: ${{ steps.greet.outputs.greeting }}
+
+  build-docker:
+    runs-on: ubuntu-latest
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true && contains(fromJSON('["main", "dev", "test"]'), github.event.pull_request.base.ref)
+    # This job will only run if the pull request is closed and the base branch is one of the specified branches
+    needs: validate  # Ensure this job runs after the greet job
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - run: npm install
+      - run: npm run build
       - name: Build Docker Image
-        uses: ./
+        uses: ./dockerfile-action
         with:
           image-name: 'my-greeting-app'
           tag: 'latest'
           push: 'false'  # Set to 'true' for pushing
+
+  deploy-demo:
+    runs-on: ubuntu-latest
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true && contains(fromJSON('["main", "dev", "test"]'), github.event.pull_request.base.ref)
+    needs: [greet, build-docker]
+    steps:
+      - name: Simulate Docker Image Deployment
+        run: |
+          echo "Starting deployment of my-greeting-app:latest..."
+          echo "Connecting to fictional Kubernetes cluster..."
+          echo "Deploying my-greeting-app:latest to namespace 'demo'..."
+          echo "Verifying deployment status..."
+          echo "Deployment successful! my-greeting-app:latest is now running."
+
+  return-greeting:
+    runs-on: ubuntu-latest
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true && contains(fromJSON('["main", "dev", "test"]'), github.event.pull_request.base.ref)
+    needs: [deploy-demo]  # Ensure this job runs after the greet job
+    steps:
+      - uses: actions/checkout@v3
+      - name: Return Greeting
+        run: echo "Pipeline run successfully!"
