@@ -9,6 +9,9 @@ export default [
       parser: tsParser,
       sourceType: 'module',
       globals: {
+        beforeEach: 'readonly',
+        require: 'readonly',
+        module: 'readonly',
         Buffer: 'readonly',
         process: 'readonly',
         __dirname: 'readonly',

@@ -6,8 +6,18 @@
     "rootDir": ".",
     "strict": true,
     "esModuleInterop": true,
-    "types": ["node", "jest"] // Explicitly include Node.js types
+    "types": [
+      "node",
+      "jest"
+    ] // Explicitly include Node.js types
   },
-  "include": ["src/**/*.ts", "scripts/**/*.ts","app/**/*.ts"],  // Only .ts files in src and scripts
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*.ts",
+    "scripts/**/*.ts",
+    "app/**/*.ts"
+  ], // Only .ts files in src and scripts
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
