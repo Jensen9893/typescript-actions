@@ -4,17 +4,6 @@ on:
     branches: ['**']
     types: [opened,closed]
 jobs:
-  catching:
-    - name: Cache npm dependencies
-      uses: actions/cache@v3
-      with:
-      path: ~/.npm
-      key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-      restore-keys: |
-        ${{ runner.os }}-node-
-    - name: Install dependencies
-      run: npm ci
-
   validate:
     runs-on: ubuntu-latest
     if: github.event.pull_request.base.ref == 'main' && github.event.action != 'closed' || (github.event.action == 'closed' && github.event.pull_request.merged == true && contains(fromJSON('["main", "dev", "test"]'), github.event.pull_request.base.ref))
@@ -23,6 +12,13 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '20'
+      - uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - run: npm ci
       - run: npm install
       - run: npm run build
       - name: Validate App
@@ -38,6 +34,13 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '20'
+      - uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - run: npm ci
       - run: npm install
       - run: npm run lint
       - run: npm run test
