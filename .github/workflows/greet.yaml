@@ -4,6 +4,16 @@ on:
     branches: ['**']
     types: [opened,closed]
 jobs:
+  catching:
+    - name: Cache npm dependencies
+      uses: actions/cache@v3
+      with:
+      path: ~/.npm
+      key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+      restore-keys: |
+        ${{ runner.os }}-node-
+    - name: Install dependencies
+      run: npm ci
 
   validate:
     runs-on: ubuntu-latest
@@ -29,6 +39,8 @@ jobs:
         with:
           node-version: '20'
       - run: npm install
+      - run: npm run lint
+      - run: npm run test
       - run: npm run build
       - name: Verify Build Output
         run: ls -R dist/
